@@ -9,7 +9,7 @@ void linearsearch(int arr[], int n, int x)
         {
             cout << "Element found at index:" << i << endl;
             flag = 1;
-            break;
+            //break;
         }
     }
     if (flag == 0)
@@ -22,7 +22,7 @@ int main()
     int n;
     cout << "Enter array size:";
     cin >> n;
-    int arr[n];
+    int *arr = new int[n];
     cout << "Enter array elements:" << endl;
     for (int i = 0; i < n; i++)
     {
