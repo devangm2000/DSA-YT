@@ -6,50 +6,53 @@ public:
     int key;
     int data;
     Node *next;
-    Node *prev;
     Node()
     {
         key = 0;
         data = 0;
         next = NULL;
-        prev = NULL;
     }
     Node(int k, int d)
     {
         key = k;
         data = d;
         next = NULL;
-        prev = NULL;
     }
 };
-class DoublyLinkedList
+class CircularLinkedList
 {
 public:
     Node *head;
-    DoublyLinkedList()
+    CircularLinkedList()
     {
         head = NULL;
     }
-    DoublyLinkedList(Node *n)
+    CircularLinkedList(Node *n)
     {
         head = n;
     }
-    //check if node exists or not
+    //check if node exists
     Node *nodeExists(int k)
     {
         Node *temp = NULL;
         Node *ptr = head;
-        while (ptr != NULL)
+        if (ptr == NULL) //no nodes
         {
-            if (ptr->key == k)
-            {
-                temp = ptr;
-            }
-            ptr = ptr->next;
+            return temp;
         }
-        return temp;
+        else //do-while loop here cause there's no node with next=NULL
+        {
+            do
+            {
+                if (ptr->key == k)
+                {
+                    temp = ptr;
+                }
+                ptr = ptr->next;
+            } while (ptr != head); //checking with head as then we will complete a full loop of the list
+            return temp;
+        }
     }
-
     //append a node to the list
     void appendNode(Node *n)
     {
@@ -62,23 +65,23 @@ public:
             if (head == NULL)
             {
                 head = n;
+                n->next = head; //circular now(points to itself)
                 cout << "Node appended" << endl;
             }
             else
             {
                 Node *ptr = head;
-                while (ptr->next != NULL)
+                while (ptr->next != head)
                 {
                     ptr = ptr->next;
                 }
                 ptr->next = n;
-                n->prev = ptr;
-                cout << "Node apppended" << endl;
+                n->next = head;
             }
         }
     }
 
-    //prepend node to start
+    //prepend node
     void prependNode(Node *n)
     {
         if (nodeExists(n->key) != NULL)
@@ -90,22 +93,26 @@ public:
             if (head == NULL)
             {
                 head = n;
+                n->next = head;
                 cout << "Node prepended as Head Node" << endl;
             }
             else
             {
-                //head points towards initial first node
-                head->prev = n; //linking first node prev to new node
-                n->next = head; //linking new node next to first node
-                head = n;       //making new node as head
-                cout << "Node prepended";
+                Node *ptr = head; //connecting last node to new node
+                while (ptr->next != head)
+                {
+                    ptr = ptr->next;
+                }
+                ptr->next = n;
+                n->next = head; //new node to initial first node
+                head = n;       //head to new node
             }
         }
     }
-    //insert a new node after a particular node in the list
+
+    //inserting node after a particualr node
     void insertNode(int k, Node *n)
     {
-        //first check if node exists or not
         Node *ptr = nodeExists(k);
         if (ptr == NULL)
         {
@@ -113,32 +120,20 @@ public:
         }
         else
         {
-            if (nodeExists(n->key) != NULL) //new node key exists
+            if (nodeExists(n->key) != NULL)
             {
                 cout << "Node already exists with key value:" << n->key << endl;
             }
             else
             {
-                //inserting at the end(e.g k is the last node key)
-                if (ptr->next == NULL)
-                {
-                    ptr->next = n;
-                    n->prev = ptr;
-                    cout << "Node inserted at the end" << endl;
-                }
-                else //inserting in between
-                {
-                    n->next = ptr->next;
-                    ptr->next->prev = n;
-                    n->prev = ptr;
-                    ptr->next = n;
-                    cout << "Node inserted" << endl;
-                }
+                n->next = ptr->next;
+                ptr->next = n;
+                cout << "Node inserted" << endl;
             }
         }
     }
-    //deleting node by key(more like unlinking)
-    //use delete temp;  to actually delete the node where temp is a pointer to the node
+
+    //delete node by key
     void deleteNodebyKey(int k)
     {
         Node *ptr = nodeExists(k);
@@ -148,32 +143,50 @@ public:
         }
         else
         {
-            if (head->key == k)
-            {
-                head = head->next;
-
-                cout << "Node unlinked with key values:" << k << endl;
+            if (ptr == head)            //deleting the head node
+            {                           //head is the only node
+                if (head->next == head) //circular
+                {
+                    head = NULL;
+                    cout << "Head node unlinked" << endl;
+                }
+                else //head isnt the only node
+                {
+                    Node *temp = head;
+                    while (temp->next != head)
+                    {
+                        temp = temp->next;
+                    }
+                    temp->next = head->next;
+                    head = head->next;
+                    cout << "Node unlinked" << endl;
+                }
             }
-            else
+            else //ptr not ==head
             {
-                Node *nextNode = ptr->next;
-                Node *prevNode = ptr->prev;
-                //deleting last node
-                if (nextNode == NULL)
+                Node *temp = NULL;
+                Node *prevpointer = head;
+                Node *currentpointer = head->next;
+                while (currentpointer != NULL)
                 {
-                    prevNode->next = NULL;
-                    cout << "Node deleted at the end";
+                    if (currentpointer->key == k)
+                    {
+                        temp = currentpointer;
+                        currentpointer = NULL;
+                    }
+                    else
+                    {
+                        prevpointer = prevpointer->next;
+                        currentpointer = currentpointer->next;
+                    }
                 }
-                else
-                {
-                    prevNode->next = nextNode;
-                    nextNode->prev = prevNode;
-                    cout << "Node deleted" << endl;
-                }
+                prevpointer->next = temp->next;
+                cout << "Node unlinked" << endl;
             }
         }
     }
-    //updating node by key
+
+    //update node by key
     void updateNodebyKey(int k, int d)
     {
         Node *ptr = nodeExists(k);
@@ -188,7 +201,7 @@ public:
         }
     }
 
-    //printing
+    //print
     void printList()
     {
         if (head == NULL)
@@ -198,23 +211,22 @@ public:
         else
         {
             Node *ptr = head;
-            while (ptr != NULL)
+            do
             {
                 cout << "Key:" << ptr->key << " Data:" << ptr->data << endl;
                 ptr = ptr->next;
-            }
+            } while (ptr != head);
         }
     }
 };
-
 int main()
 {
-    DoublyLinkedList obj;
+    CircularLinkedList c;
     int option;
     int key, data, key1;
     do
     {
-        cout << "Enter option nmuber. Enter 0 to exit!" << endl;
+        cout << "Enter option number. Enter 0 to exit!" << endl;
         cout << "1. appendNode()" << endl;
         cout << "2. prependNode()" << endl;
         cout << "3. insertNodeAfter()" << endl;
@@ -224,7 +236,7 @@ int main()
         cout << "7. Clear Screen" << endl;
         cin >> option;
         Node *n1 = new Node(); //dynamic memory allocation
-        //can do Node *n1; also but then after each do while iteration, n1 will be destroyed
+        //can do Node *n1; also bu then after each do while iteration, n1 will be destroyed
         switch (option)
         {
         case 1:
@@ -234,7 +246,7 @@ int main()
             cin >> data;
             n1->key = key;
             n1->data = data;
-            obj.appendNode(n1);
+            c.appendNode(n1);
             break;
         case 2:
             cout << "Enter key:" << endl;
@@ -243,7 +255,7 @@ int main()
             cin >> data;
             n1->key = key;
             n1->data = data;
-            obj.prependNode(n1);
+            c.prependNode(n1);
             break;
         case 3:
             cout << "Enter key of new node:" << endl;
@@ -254,22 +266,22 @@ int main()
             n1->data = data;
             cout << "Enter key after which new node is inserted:" << endl;
             cin >> key1;
-            obj.insertNode(key1, n1);
+            c.insertNode(key1, n1);
             break;
         case 4:
             cout << "Enter the key of the node to be deleted:" << endl;
             cin >> key;
-            obj.deleteNodebyKey(key);
+            c.deleteNodebyKey(key);
             break;
         case 5:
             cout << "Enter the key of the node:" << endl;
             cin >> key;
             cout << "Enter new data for the key" << endl;
             cin >> data;
-            obj.updateNodebyKey(key, data);
+            c.updateNodebyKey(key, data);
             break;
         case 6:
-            obj.printList();
+            c.printList();
             break;
         case 7:
             system("cls");
