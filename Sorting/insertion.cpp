@@ -3,7 +3,7 @@ using namespace std;
 void printarray(int arr[], int n)
 {
 
-    cout << "Array after slection sort:" << endl;
+    cout << "Array after insertion sort:" << endl;
     for (int i = 0; i < n; i++)
     {
         cout << arr[i] << endl;
