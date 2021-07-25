@@ -1,6 +1,6 @@
 #include <iostream>
+#define GLOBALSPACE 10
 using namespace std;
-#define SPACE 10;
 class TreeNode
 {
 public:
@@ -38,6 +38,7 @@ public:
         {
             root = new_node;
             cout << "Value inserted as root node." << endl;
+            // break;
         }
         else
         {
@@ -49,30 +50,70 @@ public:
                     cout << "Value already exists." << endl;
                     return;
                 }
-                else if (new_node->value < temp->value && temp->left == NULL)
+                else if ((new_node->value < temp->value) && (temp->left == NULL))
                 {
                     temp->left = new_node;
-                    cout << "Value inserted." << endl;
+                    cout << "Value inserted to the left." << endl;
                     break;
                 }
                 else if (new_node->value < temp->value)
                 {
                     temp = temp->left;
-                    break;
                 }
-                else if (new_node->value > temp->value && temp->right == NULL)
+                else if ((new_node->value > temp->value) && (temp->right == NULL))
                 {
                     temp->right = new_node;
-                    cout << "Value inserted." << endl;
+                    cout << "Value inserted to the right." << endl;
                     break;
                 }
                 else
                 {
                     temp = temp->right;
-                    break;
                 }
             }
         }
+    }
+    void printPreorder(TreeNode *r) //Node Left Right
+    {
+        if (r == NULL)
+        {
+            return;
+        }
+        cout << r->value << " ";
+        printPreorder(r->left);
+        printPreorder(r->right);
+    }
+    void printInorder(TreeNode *r) //Left Node Right
+    {
+        if (r == NULL)
+        {
+            return;
+        }
+        printInorder(r->left);
+        cout << r->value << " ";
+        printInorder(r->right);
+    }
+    void printPostorder(TreeNode *r) //Left Right Node
+    {
+        if (r == NULL)
+        {
+            return;
+        }
+        printPostorder(r->left);
+        printPostorder(r->right);
+        cout << r->value << " ";
+    }
+    void print2D(TreeNode *r, int space)
+    {
+        if (r == NULL) // Base case  1
+            return;
+        space += GLOBALSPACE;     // Increase distance between levels   2
+        print2D(r->right, space); // Process right child first 3
+        cout << endl;
+        for (int i = 0; i < space; i++) // 5
+            cout << " ";                // 5.1
+        cout << r->value << "\n";       // 6
+        print2D(r->left, space);        // Process left child  7
     }
 };
 int main()
@@ -81,7 +122,7 @@ int main()
     int option, val;
     do
     {
-        cout << "Enter option nmuber. Enter 0 to exit!" << endl;
+        cout << "\nEnter option nmuber. Enter 0 to exit!" << endl;
         cout << "1. Insert Node" << endl;
         cout << "2. Search Node" << endl;
         cout << "3. Delete Node" << endl;
@@ -105,6 +146,13 @@ int main()
             break;
         case 4:
             cout << "BST:" << endl;
+            obj.print2D(obj.root, 5);
+            cout << "\nPre Order:" << endl;
+            obj.printPreorder(obj.root);
+            cout << "\nIn Order:" << endl;
+            obj.printInorder(obj.root);
+            cout << "\nPost Order:" << endl;
+            obj.printPostorder(obj.root);
             break;
         case 5:
             system("cls");
