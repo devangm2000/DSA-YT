@@ -115,6 +115,52 @@ public:
         cout << r->value << "\n";       // 6
         print2D(r->left, space);        // Process left child  7
     }
+    TreeNode *search(int val)
+    {
+        if (root == NULL)
+        {
+            return root;
+        }
+        else
+        {
+            TreeNode *temp = root;
+            while (temp != NULL)
+            {
+                if (val == temp->value)
+                {
+                    return temp;
+                }
+                else if (val < temp->value)
+                {
+                    temp = temp->left;
+                }
+                else
+                {
+                    temp = temp->right;
+                }
+            }
+            return NULL;
+        }
+    }
+    int height(TreeNode *r)
+    {
+        if (r == NULL)
+        {
+            return -1;
+        }
+        else
+        {
+            int lheight = height(r->left);
+            int rheight = height(r->right);
+
+            if (lheight > rheight)
+            {
+                return (lheight + 1);
+            }
+            else
+                return (rheight + 1);
+        }
+    }
 };
 int main()
 {
@@ -127,7 +173,8 @@ int main()
         cout << "2. Search Node" << endl;
         cout << "3. Delete Node" << endl;
         cout << "4. Print BST values" << endl;
-        cout << "5. Clear Screen" << endl;
+        cout << "5. Height of the tree:" << endl;
+        cout << "6. Clear Screen" << endl;
         cin >> option;
         TreeNode *new_node = new TreeNode();
         switch (option)
@@ -140,6 +187,16 @@ int main()
             break;
         case 2:
             cout << "Search value:" << endl;
+            cin >> val;
+            new_node = obj.search(val);
+            if (new_node != NULL)
+            {
+                cout << "Value exists" << endl;
+            }
+            else
+            {
+                cout << "Value doesnt exist" << endl;
+            }
             break;
         case 3:
             cout << "Delete value:" << endl;
@@ -155,6 +212,10 @@ int main()
             obj.printPostorder(obj.root);
             break;
         case 5:
+            cout << "Height:" << endl;
+            cout << obj.height(obj.root) << endl;
+            break;
+        case 6:
             system("cls");
             break;
         default:
